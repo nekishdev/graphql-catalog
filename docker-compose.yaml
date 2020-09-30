@@ -1,0 +1,41 @@
+version: '3'
+
+volumes:
+  postgres:
+    driver: local
+
+
+services:
+  golang:
+    build: ./golang
+    container_name: golang
+    ports:
+      - '${GOLANG_LOCAL_PORT}:${GOLANG_CONTAINER_PORT}'
+    environment:
+      PORT: ${GOLANG_CONTAINER_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+    depends_on:
+      - postgres
+
+    networks:
+      - mynet
+
+  postgres:
+    image: postgres:11
+    container_name: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    networks:
+      - mynet
+
+networks:
+  mynet:
+    driver: bridge

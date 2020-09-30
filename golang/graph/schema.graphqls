@@ -1,0 +1,118 @@
+scalar Map
+scalar Any
+
+# Product
+type Product {
+  Id: ID!
+  Name: String!
+  Description: String!
+  ImageSrc: String!
+  Price: Float!
+  Category: Category
+  Properties: [ProductPropertyValue]
+}
+
+type ProductProperty {
+  Code: String!
+  Name: String!
+  Required: Boolean!
+}
+
+type ProductPropertyValue {
+  PropertyCode: String!
+  Value: String!
+  Property: ProductProperty!
+}
+
+# Category
+type Category {
+  Id: ID!
+  Name: String!
+  Description: String!
+  ImageSrc: String!
+}
+
+# Input
+# ======
+
+# Product
+input ProductPropertyValueInput {
+  Code: String!
+  Value: String!
+}
+
+input CreateProductInput {
+  Name: String!
+  Description: String!
+  ImageSrc: String!
+  Price: Float!
+  CategoryID: ID,
+  Properties: [ProductPropertyValueInput]
+}
+
+input UpdateProductInput {
+  Name: String
+  Description: String
+  ImageSrc: String
+  Price: Float
+  CategoryID: ID
+  Properties: [ProductPropertyValueInput]
+}
+
+input CreateProductProperty {
+  Name: String!
+  Code: String!
+  Required: Boolean!
+}
+
+input ProductFilterCondition {
+  By: String!
+  Field: String!
+  Operator: String!
+  Value: Any!
+}
+
+input ProductFilter {
+  Conditions: [ProductFilterCondition!]!
+}
+
+# Category
+input CreateCategoryInput {
+  Name: String!
+  Description: String!
+  ImageSrc: String!
+}
+
+input UpdateCategoryInput {
+  Name: String
+  Description: String
+  ImageSrc: String
+}
+# ======
+
+
+# Query
+# ======
+type Query {
+  products(limit:Int!, offset:Int!, filter:ProductFilter): [Product!]!
+  product(id:ID!): Product!
+
+  categories(limit:Int!, offset:Int!): [Category!]!
+  category(id:ID!): Category!
+
+  productProperties: [ProductProperty!]!
+}
+# ======
+
+type Mutation {
+  createProduct(input: CreateProductInput!): Product!
+  updateProduct(id: ID!, input: UpdateProductInput!): Product!
+  deleteProduct(id: ID!): Boolean!
+
+  createCategory(input: CreateCategoryInput!): Category!
+  updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
+  deleteCategory(id: ID!): Boolean!
+
+  createProductProperty(input: CreateProductProperty!): ProductProperty!
+  deleteProductProperty(code: String!): Boolean!
+}
